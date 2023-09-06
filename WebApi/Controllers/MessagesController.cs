@@ -45,7 +45,7 @@ public class MessagesController : ControllerBase
             if (string.IsNullOrEmpty(id)) 
                 throw new ArgumentNullException(nameof(id));
 
-            var message = await _messageService.GetMessageById(id);
+            var message = await _messageService.GetMessageById(Int32.Parse(id));
             
             if (message == null)
             {
@@ -61,6 +61,39 @@ public class MessagesController : ControllerBase
         catch (KeyNotFoundException ex)
         {
             return NotFound(ex);
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.ToString());
+        }
+    }
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpGet("List")]
+    [ProducesResponseType(typeof(string), 200)]
+    [ProducesResponseType(typeof(string), 400)]
+    [ProducesResponseType(typeof(string), 401)]
+    [ProducesResponseType(typeof(string), 404)]
+    [ProducesResponseType(typeof(string), 500)]
+    public IActionResult GetUserMessages()
+    {
+        try
+        {
+            var userId = User.Claims.First(claim => claim.Type == "id").Value
+                ?? throw new NullReferenceException($"Nenhum 'userId' foi obtido.");
+
+            var messages = _messageService.ListMessagesByUserId(userId)
+                ?? throw new KeyNotFoundException($"Nenhuma lista de mensagens foi encontrada para o usuário; UserId = {userId}");
+
+            return Ok(messages);
+        }
+        catch (NullReferenceException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
         }
         catch (Exception ex)
         {
@@ -112,7 +145,7 @@ public class MessagesController : ControllerBase
         }
         catch (Exception ex)
         {
-            return Problem(ex.Message);
+            return Problem(ex.ToString());
         }
     }
 

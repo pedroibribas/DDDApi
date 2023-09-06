@@ -8,7 +8,7 @@
         /// <param name="id">Id da entidade na base de dados.</param>
         /// <returns>A entidade encontrada.</returns>
         /// <exception cref="KeyNotFoundException"></exception>
-        Task<T> GetById(string id);
+        Task<T> GetById(int id);
 
         Task<List<T>> List();
 

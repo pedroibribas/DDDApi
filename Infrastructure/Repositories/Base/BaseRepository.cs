@@ -1,7 +1,6 @@
 ﻿using Domain.Interfaces.Repositories.Base;
 using Infrastructure.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
 
@@ -36,7 +35,7 @@ public class BaseRepository<T> : IBaseRepository<T>, IDisposable where T : class
         _db = new BaseDbContext(_optionsBuilder);
     }
 
-    public async Task<T> GetById(string id)
+    public async Task<T> GetById(int id)
     {
         return await _db.Set<T>().FindAsync(id) ??
             throw new KeyNotFoundException(

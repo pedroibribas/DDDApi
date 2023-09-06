@@ -13,9 +13,11 @@ public class MessageService : IMessageService
         _repository = messageRepository;
     }
 
-    public async Task<Message> GetMessageById(string id) => await _repository.GetById(id);
+    public async Task<Message> GetMessageById(int id) => await _repository.GetById(id);
 
     public async Task<List<Message>> ListMessages() => await _repository.List();
+
+    public List<Message> ListMessagesByUserId(string userId) => _repository.ListMessagesByUserId(userId);
 
     public async Task AddMessage(Message message) => await _repository.Add(message);
 
